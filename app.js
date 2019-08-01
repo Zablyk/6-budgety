@@ -20,6 +20,7 @@ var budgetController = (function() {
             sum += cur.value;
         });
         //[200, 300, 600]
+        //sum calculation
         //sum = 0 + 200
         //sum = 200 + 300
         //sum = 500 + 600
@@ -97,7 +98,7 @@ var budgetController = (function() {
         getBudget: function() {
           return{
               budget: data.budget,
-              tatalIncome: data.totals.inc,
+              totalIncome: data.totals.inc,
               totalExpenses: data.totals.exp,
               percentage: data.percentage
           }; 
@@ -177,8 +178,8 @@ var UIController = (function() {
         
         displayBudget: function(obj) {
             document.querySelector(Domstrings.budgetLabel).textContent = obj.budget;
-            document.querySelector(Domstrings.incomeLabel).textContent = obj.totals.inc;
-            document.querySelector(Domstrings.expensesLabel).textContent = obj.totals.exp;
+            document.querySelector(Domstrings.incomeLabel).textContent = obj.totalIncome;
+            document.querySelector(Domstrings.expensesLabel).textContent = obj.totalExpenses;
             document.querySelector(Domstrings.percentageLabel).textContent = obj.percentage;
         },
         
