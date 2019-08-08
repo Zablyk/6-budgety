@@ -6,7 +6,17 @@ var budgetController = (function() {
         this.id = id;
         this.description = description;
         this.value = value;
+        this.percentage = -1;
     };
+
+    Expense.prototype.calcPercentages = function (totalIncome) {
+        if (totalIncome >0) {
+            this.percentage = Math.round((this.value/totalIncome) * 100);
+        } else {
+            this
+        }
+    };
+
     
     var Income = function(id, description, value) {
         this.id = id;
@@ -77,8 +87,21 @@ var budgetController = (function() {
             return newItem;
         },
 
-        deleteItem: function() {
+        deleteItem: function(type, id) {
+            var ids, index;
+            // id = 6
+            // data.allItems[type][ID];
+            // ids = [1 2 4 6 8]
+            // index = 3
+            ids = data.allItems[type].map(function(current) {
+                return current.id;
+            });
             
+            index = ids.indexOf(id);
+            
+            if (index !== -1) {
+                data.allItems[type].splice(index, 1);
+            };
         },
         
         calculateBudget: function() {
@@ -98,6 +121,20 @@ var budgetController = (function() {
                 }
     
         },
+
+        culculatePersentages: function() {
+            /*
+            exp:
+            a=20
+            b=10
+            c=40
+            total income = 100
+            a=20/100=20%
+            b=10/100=10%
+            c=40/100=40%
+
+            */
+        }
         
         getBudget: function() {
           return{
@@ -167,6 +204,12 @@ var UIController = (function() {
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml); 
         },
         
+        deleteListItem: function(selectorID) {
+            var el = document.getElementById(selectorID);
+            el.parentNode.removeChild(el);
+        },    
+
+
         clearFields: function(){
             var fields, fieldsArray;
             
@@ -229,10 +272,19 @@ var controller = (function(budgetCtrl, UICtrl) {
         // 2. Return the budget.    
            var budget = budgetCtrl.getBudget(); 
         
-           // 3. Display rhe budget on the UI.
+           // 3. Display the budget on the UI.
         UICtrl.displayBudget(budget);
             
-        }
+        };
+
+        var updatePercentages = function() {
+
+        // 1. Calculate percenages.
+        
+        // 2. Read percentage from a budget controller.
+
+        // 3. Display the percentage at UI.
+        };
         
         
             
@@ -254,6 +306,9 @@ var controller = (function(budgetCtrl, UICtrl) {
             
         // 5. Calculate and update budget.
             updateBudget();
+        
+        // 6. Calculate and update percentages.
+            updatePercentages();    
             
         }    
     };
@@ -261,25 +316,29 @@ var controller = (function(budgetCtrl, UICtrl) {
     var ctrlDeleteItem = function(event) {
         var itemID, splitID, type, ID;
 
-        itemID = console.log(event.target.parentNode.parentNode.parentNode.parentNode.id);
+        itemID = event.target.parentNode.parentNode.parentNode.parentNode.id;
         
         if (itemID) {
             splitID = itemID.split('-');
             type = splitID[0];
-            ID = splitID[1];
+            ID = parseInt(splitID[1]);
 
             // 1. Delete the item from data structure.
-
+            budgetCtrl.deleteItem(type, ID);
             // 2. Delete the item from a UI.
-
+            UICtrl.deleteListItem(itemID);
             // 3. Update and show new budget.
+            updateBudget();
+            // 4. Calculate and update percentages.
+            updatePercentages();    
+        
         }
     };
     
     return{
         init: function() {
-            console.log('Application has started.');
-            UICtrl.displayBudget({
+            console.log ('Application has started.');
+            UICtrl.displayBudget ({
                     budget: 0,
                     totalIncome: 0,
                     totalExpenses: 0,
